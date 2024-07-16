@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Заявки</title>
+    <style>
+        @font-face {
+            font-family: 'Times';
+            src: url("{% static 'fonts/times.ttf' %}") format('truetype'); 
+            font-weight: normal;
+            font-style: normal;
+        }
+
+        body {
+            font-family: 'Times', sans-serif;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            border: 1px solid black;
+            padding: 8px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Заявки</h1>
+    <table>
+        <thead>
+            <tr>
+                <th>Имя</th>
+                <th>Email</th>
+                <th>Телефон</th>
+                <th>Тип проекта</th>
+                <th>Бюджет</th>
+                <th>Дедлайн</th>
+                <th>Сообщение</th>
+                <th>Дата создания</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for application in applications %}
+                <tr>
+                    <td>{{ application.name }}</td>
+                    <td>{{ application.email }}</td>
+                    <td>{{ application.phone }}</td>
+                    <td>{{ application.project_type }}</td>
+                    <td>{{ application.budget }}</td>
+                    <td>{{ application.deadline|date:"Y-m-d" }}</td>
+                    <td>{{ application.message }}</td>
+                    <td>{{ application.created_at|date:"Y-m-d H:i:s" }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</body>
+</html>

@@ -1,0 +1,53 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Проекты{% endblock title %}
+{% block content %}
+      <div class='bg-gray-800 text-white p-5 md:py-8 md:px-20 lg:px-40 xl:px-60'>
+        <p style="font-family: Poppins-Bold" class='text-4xl font-extrabold py-5 text-center md:text-start'>Наши завершённые проекты</p>
+        {% for project in projects %}
+        <div style="box-shadow:0 5px 30px 0 rgba(0,0,0,.05);" class='flex flex-col md:flex-row gap-4 md:gap-x-8 bg-gray-900 p-5 mb-4 rounded-lg'>
+              {% if project.image %}
+              <img class="post-img-url rounded-lg object-cover" width='350px' height='180px' src="{{project.image}}" alt="image">
+              {% else %}
+              <img class="post-img-url rounded-lg object-cover" width='350px' height='180px' src="https://cdn.jsdelivr.net/gh/hostmind/host/static/password-generator.png" alt="Default image">
+              {% endif %}
+              <div>
+                <p style="font-family: Poppins-Bold" class="font-bold text-xl text-transparent bg-clip-text bg-gradient-to-r from-cyan-200 via-blue-300 to-blue-600"><a href='/projects'><span class='text-xl font-extrabold'>{{project.title|slice:80}}</span></a><br><p>
+                <p class='text-justify my-3'>{{project.short_description|slice:180|safe}}</p>
+                <span class='text-lg font-bold'>Категории:</span><br>
+                <div class='flex space-x-2 my-3'>
+                {% for category in project.categories.all %}
+                <span class='text-xs bg-gradient-to-r from-cyan-500 to-blue-500 py-1 px-4 rounded-full'><i class="fa-solid fa-layer-group"></i> {{ category.name }}</span>
+                {% endfor %}
+                </div>
+                <span class='text-lg font-bold'>Стек технологий:</span><br>
+                <div class='flex space-x-2 my-3'>
+                {% for technology in project.technologies.all %}
+                <span class='text-xs bg-gradient-to-r from-cyan-500 to-blue-500 py-1 px-4 rounded-full'><i class="{{ technology.classtype }}"></i> {{ technology.name }}</span>
+                {% endfor %}
+                </div>
+                </div>
+            </div>
+        {% endfor %}
+        <div class="pagination py-8">
+          <span class="page-links">
+            {% if projects.has_previous %}
+            <div class='float-left'>
+              <a class='bg-blue-600 p-2 px-4 rounded-[6px] hover:bg-gray-800 hover:outline hover:outline-blue-600 transition delay-75 ease-in-out my-3' href="?page={{ projects.previous_page_number }}"><i class="bi bi-arrow-left font-extrabold"></i> Предыдущая страница</a>
+            </div>
+            {% endif %}
+        
+            {% comment %} <span class="page-current">
+                Page {{ projects.number }} of {{ projects.paginator.num_pages }}
+            </span> {% endcomment %}
+        
+            {% if projects.has_next %}
+            <div class='float-right'>
+              <a class='bg-blue-600 p-2 px-4 rounded-[6px] hover:bg-gray-800 hover:outline hover:outline-blue-600 transition delay-75 ease-in-out my-3' href="?page={{ projects.next_page_number }}">Следующая страница <i class="bi bi-arrow-right font-extrabold"></i></a>
+            </div>
+            {% endif %}
+          </span>
+        </div>
+      </div>
+    {% endblock %}
