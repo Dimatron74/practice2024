@@ -21,56 +21,104 @@ def thanks(request):
     return render(request, 'thanks.html')
 
 
+from django.utils.html import escape
 def contact(request):
     if request.method == 'POST':
-        name = request.POST.get('name')
-        email = request.POST.get('email')
-        phone = request.POST.get('phone')
-        project_type = request.POST.get('project_type')
-        budget = request.POST.get('budget')
+        name = escape(request.POST.get('name', ''))
+        email = escape(request.POST.get('email', ''))
+        phone = escape(request.POST.get('phone', ''))
+        project_type = escape(request.POST.get('project_type', ''))
+        budget = escape(request.POST.get('budget', ''))
         deadline = request.POST.get('deadline')
-        message = request.POST.get('message')
-        
-        invalid_input = ['', ' ']  # Проверяем все поля на пустоту
+        message = escape(request.POST.get('message', ''))
 
-        if name in invalid_input or email in invalid_input or message in invalid_input or project_type in invalid_input or budget in invalid_input:
+        # Проверка на пустые значения
+        if not all([name, email, message, project_type, budget]):
             messages.error(request, 'One or more fields are empty!')
         else:
             email_pattern = re.compile(r'^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$')
             phone_pattern = re.compile(r'^(?:\+7|8)[0-9]{10}$')
+
             if not deadline:  # Если поле deadline пустое
-                deadline = None
-            if email_pattern.match(email) and (phone_pattern.match(phone) or phone in invalid_input):
-                application = Application(
+               deadline = None
+            if email_pattern.match(email) and (phone_pattern.match(phone) or not phone):
+                # Используем ORM Django для создания объекта и сохранения в базе данных
+                application = Application.objects.create(
                     name=name,
                     email=email,
                     phone=phone,
                     project_type=project_type,
                     budget=budget,
-                    deadline=deadline, 
+                    deadline=deadline,
                     message=message
                 )
-                application.save()
 
                 # Отправка email-уведомления
                 subject = 'Спасибо за вашу заявку!'
                 message = f'Здравствуйте, {name}!\n\nМы получили вашу заявку и скоро свяжемся с вами.\n\nС уважением,\nКоманда Pixel Creative'
                 from_email = 'Pixel Creative<logachev_16@bk.ru>'
-                recipient_list = [email]  # Email клиента
+                recipient_list = [email]
 
-                send_mail(subject, message, from_email, recipient_list, fail_silently = False)
+                send_mail(subject, message, from_email, recipient_list, fail_silently=False)
 
                 messages.success(request, 'Ваше сообщение отправлено. Спасибо за проявленный интерес к нам! Скоро мы с вами свяжемся.')
-                return redirect('contact')  # Редирект 
+                return redirect('contact') 
             else:
                 messages.error(request, 'Почта или телефон введены некорректно!')
 
     return render(request, 'contact.html', {})
 
+#УЯЗВИМЫЙ К SQL ИНЪЕКЦИИ
+# def contact(request):
+#     if request.method == 'POST':
+#         name = request.POST.get('name')
+#         email = request.POST.get('email')
+#         phone = request.POST.get('phone')
+#         project_type = request.POST.get('project_type')
+#         budget = request.POST.get('budget')
+#         deadline = request.POST.get('deadline')
+#         message = request.POST.get('message')
+        
+#         invalid_input = ['', ' ']  # Проверяем все поля на пустоту
+
+#         if name in invalid_input or email in invalid_input or message in invalid_input or project_type in invalid_input or budget in invalid_input:
+#             messages.error(request, 'One or more fields are empty!')
+#         else:
+#             email_pattern = re.compile(r'^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$')
+#             phone_pattern = re.compile(r'^(?:\+7|8)[0-9]{10}$')
+#             if not deadline:  # Если поле deadline пустое
+#                 deadline = None
+#             if email_pattern.match(email) and (phone_pattern.match(phone) or phone in invalid_input):
+#                 application = Application(
+#                     name=name,
+#                     email=email,
+#                     phone=phone,
+#                     project_type=project_type,
+#                     budget=budget,
+#                     deadline=deadline, 
+#                     message=message
+#                 )
+#                 application.save()
+
+#                 # Отправка email-уведомления
+#                 subject = 'Спасибо за вашу заявку!'
+#                 message = f'Здравствуйте, {name}!\n\nМы получили вашу заявку и скоро свяжемся с вами.\n\nС уважением,\nКоманда Pixel Creative'
+#                 from_email = 'Pixel Creative<logachev_16@bk.ru>'
+#                 recipient_list = [email]  # Email клиента
+
+#                 send_mail(subject, message, from_email, recipient_list, fail_silently = False)
+
+#                 messages.success(request, 'Ваше сообщение отправлено. Спасибо за проявленный интерес к нам! Скоро мы с вами свяжемся.')
+#                 return redirect('contact')  # Редирект 
+#             else:
+#                 messages.error(request, 'Почта или телефон введены некорректно!')
+
+#     return render(request, 'contact.html', {})
+
 def projects(request):
     project_list = Project.objects.all().order_by('-updated_at')
     paginator = Paginator(project_list, 3) 
-    page = request.GET.get('page')
+    page = request.GET.get('page', '')
 
     try:
         projects = paginator.page(page)
@@ -89,7 +137,7 @@ def blog(request):
     blogs_list = Blog.objects.all().order_by('-time')
 
     paginator = Paginator(blogs_list, 3)  # По 3 блога на страницу
-    page = request.GET.get('page')
+    page = request.GET.get('page', '')
     try:
         blogs = paginator.page(page)
     except PageNotAnInteger:
@@ -109,7 +157,7 @@ def category(request, category):
         message = f"No posts found in category: '{category}'"
         return render(request, "category.html", {"message": message})
     paginator = Paginator(category_posts, 3)
-    page = request.GET.get('page')
+    page = request.GET.get('page', '')
     category_posts = paginator.get_page(page)
     return render(request, "category.html", {"category": category, 'category_posts': category_posts})
 
@@ -119,7 +167,7 @@ def categories(request):
 
 
 def search(request):
-    query = request.GET.get('q')
+    query = request.GET.get('q', '')
     query_list = query.split()
 
     blog_results = Blog.objects.none()
@@ -166,7 +214,7 @@ def search(request):
 
     # Пагинация
     paginator = Paginator(results, 3)
-    page = request.GET.get('page')
+    page = request.GET.get('page', '')
     try:
         results = paginator.page(page)
     except PageNotAnInteger:
