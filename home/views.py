@@ -132,14 +132,14 @@ def search(request):
     for word in query_list:
         # Поиск по Blog
         blogs = Blog.objects.filter(
-            Q(title__icontains=word) | Q(content__icontains=word)
+            Q(title__icontains=word) | Q(content__icontains=word) | Q(meta__icontains=word)
         )
         blog_results |= blogs
         blog_ids.update(blogs.values_list('pk', flat=True))  # Добавляем ID в множество
 
         # Поиск по Project
         projects = Project.objects.filter(
-            Q(title__icontains=word) | Q(description__icontains=word) | Q(short_description__icontains=word)
+            Q(title__icontains=word) | Q(short_description__icontains=word)
         )
         project_results |= projects
         project_ids.update(projects.values_list('pk', flat=True))  # Добавляем ID в множество
