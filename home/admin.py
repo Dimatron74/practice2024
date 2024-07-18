@@ -25,6 +25,11 @@ class BlogAdminForm(forms.ModelForm):
 class BlogAdmin(admin.ModelAdmin):
     form = BlogAdminForm
 
+class ProjectAdmin(admin.ModelAdmin):
+    list_display = ('title', 'short_description', 'created_at')  # Поля для отображения в списке
+    list_filter = ('categories', 'technologies')  # Фильтры по категориям и технологиям
+    search_fields = ('title', 'description')
+
 class ApplicationAdmin(admin.ModelAdmin):
     list_display = ('name', 'email', 'phone', 'project_type', 'budget', 'deadline', 'created_at')
     search_fields = ('name', 'email', 'phone', 'project_type', 'budget', 'message')
@@ -137,3 +142,6 @@ class ApplicationAdmin(admin.ModelAdmin):
 
 admin.site.register(Application, ApplicationAdmin)
 admin.site.register(Blog, BlogAdmin)
+admin.site.register(Project, ProjectAdmin)
+admin.site.register(Technology)
+admin.site.register(Category)

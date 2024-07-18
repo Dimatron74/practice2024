@@ -1,5 +1,4 @@
-from django.shortcuts import render, HttpResponse, HttpResponseRedirect, redirect, get_object_or_404
-from django.http import Http404
+from django.shortcuts import render, redirect
 from home.models import *
 from django.contrib import messages
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
@@ -10,9 +9,9 @@ import re
 
 # Create your views here.
 def index (request):
-    blogs = Blog.objects.all()
-    random_blogs = random.sample(list(blogs), 3)
-    context = {'random_blogs': random_blogs}
+    blogs = Blog.objects.all().order_by('-time')[:3]
+    #random_blogs = random.sample(list(blogs), 3)
+    context = {'random_blogs': blogs}
     return render(request, 'index.html', context)
 
 def about (request):

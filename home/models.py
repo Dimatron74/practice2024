@@ -30,6 +30,10 @@ class Technology(models.Model):
 
     def __str__(self):
         return self.name
+    
+    class Meta:
+        verbose_name = "Технологию"
+        verbose_name_plural = "Технологии"
 
 class Category(models.Model):
     id = models.AutoField(primary_key=True)
@@ -37,6 +41,10 @@ class Category(models.Model):
 
     def __str__(self):
         return self.name
+    
+    class Meta:
+        verbose_name = "Категорию"
+        verbose_name_plural = "Категории"
 
 class Project(models.Model):
     id = models.AutoField(primary_key=True)
@@ -52,6 +60,10 @@ class Project(models.Model):
 
     def __str__(self):
         return self.title
+    
+    class Meta:
+        verbose_name = "Проект"
+        verbose_name_plural = "Проекты"
 
 class Application(models.Model):
     id = models.AutoField(primary_key=True)
