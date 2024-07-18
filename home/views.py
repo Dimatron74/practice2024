@@ -313,4 +313,3 @@ def blogpost (request, slug):
     except Blog.DoesNotExist:
         context = {'message': 'Новость не найдена'}
         return render(request, '404.html', context, status=404)
-
