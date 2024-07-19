@@ -1,9 +1,11 @@
-from django.test import TestCase
+from django.test import TestCase, Client, LiveServerTestCase
 from django.urls import reverse
 from django.core import mail
 from .models import * # Импортируй формы, модели или функции, которые хочешь протестировать
 from .views import *
 from django.contrib.messages import get_messages
+from selenium import webdriver
+from selenium.webdriver.common.by import By
 
 class IndexViewTest(TestCase):
     def setUp(self):
@@ -259,3 +261,6 @@ class ProjectsViewTest(TestCase):
         response = self.client.get(reverse('home:projects') + '?page=100')
         self.assertEqual(response.status_code, 200)
         self.assertEqual(len(response.context['projects']), 1) 
+
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC

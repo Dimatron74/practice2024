@@ -24,7 +24,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-v+r480m@z6_x@hh4w#fq6t8zqrfo8+d@2823@eu7vntl!cz=%o'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = ["*"]
 
@@ -165,10 +165,9 @@ MEDIA_ROOT = os.path.join(BASE_DIR, "media")
 # ]
 
 if DEBUG:
-  STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
+  STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static'), os.path.join(BASE_DIR, 'staticfiles')]
 else:
-  STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
-  STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
+  STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 
 
 # EMAIL CONFIGURATION (for contact form)
