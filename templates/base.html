@@ -76,7 +76,7 @@
         </div>
         <div class='modal animate-reveal flex items-center justify-center h-screen'>
             <div class="bg-gray-900 rounded-lg overflow-hidden shadow-xl transform transition-all sm:max-w-sm sm:w-full">
-              <form method="post" action="{% url 'search' %}"> 
+              <form method="post" action="{% url 'home:search' %}"> 
                 {% csrf_token %}
                 <div class="px-10 py-10"> 
                   <div class="text-xl text-center font-extrabold mb-4">Поиск</div>

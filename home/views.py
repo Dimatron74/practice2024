@@ -62,7 +62,7 @@ def contact(request):
                 send_mail(subject, message, from_email, recipient_list, fail_silently=False)
 
                 messages.success(request, 'Ваше сообщение отправлено. Спасибо за проявленный интерес к нам! Скоро мы с вами свяжемся.')
-                return redirect('contact') 
+                return redirect('home:contact') 
             else:
                 messages.error(request, 'Почта или телефон введены некорректно!')
 
@@ -205,12 +205,17 @@ def search(request):
             project_results |= projects
             project_ids.update(projects.values_list('pk', flat=True))
 
-    # Извлекаем уникальные объекты по ID
-    blog_results = Blog.objects.filter(pk__in=blog_ids).order_by('-time')
-    project_results = Project.objects.filter(pk__in=project_ids).order_by('-created_at')
 
-    # Объединяем результаты
-    results = list(blog_results) + list(project_results)
+    if not query_list: # Если запрос пустой
+        # Извлекаем уникальные объекты по ID
+        blog_results = Blog.objects.all().order_by('-time')
+        project_results = Project.objects.all().order_by('-created_at')
+        # Объединяем результаты
+        results = list(blog_results) + list(project_results)
+    else:
+        blog_results = Blog.objects.filter(pk__in=blog_ids).order_by('-time')
+        project_results = Project.objects.filter(pk__in=project_ids).order_by('-created_at')
+        results = list(blog_results) + list(project_results)
 
     # Пагинация
     paginator = Paginator(results, 3)
