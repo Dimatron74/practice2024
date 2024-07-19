@@ -53,7 +53,7 @@ def contact(request):
                     message=message
                 )
 
-                # Отправка email-уведомления
+                #Отправка email-уведомления
                 subject = 'Спасибо за вашу заявку!'
                 message = f'Здравствуйте, {name}!\n\nМы получили вашу заявку и скоро свяжемся с вами.\n\nС уважением,\nКоманда Pixel Creative'
                 from_email = 'Pixel Creative<logachev_16@bk.ru>'
